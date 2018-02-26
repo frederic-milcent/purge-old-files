@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+1.2.1
+-----
+
+* Update README with ``-s``/``--syslog`` CLI argument
+
+
 1.2.0
 -----
 
