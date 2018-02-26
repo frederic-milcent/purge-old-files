@@ -9,6 +9,7 @@ dist/
 .cache/
 junit.xml
 .tox/
+.pytest_cache/
 # virtualenv
 .env/
 # coverage.py

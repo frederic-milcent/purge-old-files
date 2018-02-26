@@ -1,6 +1,8 @@
 from argparse import ArgumentParser, Namespace
 import logging
-from os import unlink
+import logging.handlers
+from os import unlink, getpid
+from os.path import basename
 import sys
 
 from purge_old_files import filters, age, finder
@@ -8,6 +10,8 @@ from purge_old_files import filters, age, finder
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_MESSAGE_FORMAT = '%(asctime)s.%(msecs)03d %(levelname)s %(message)s'
+SYSLOG_MESSAGE_FORMAT = '{name}[{pid}]: %(message)s'.format(
+    name=basename(sys.argv[0]), pid=getpid())
 DEFAULT_DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 
 
@@ -24,6 +28,9 @@ def parse_arguments(argv=None):
         '--quiet', '-q', dest='log_level', action='store_const',
         const=logging.WARNING, help='Only show warning messages')
 
+    parser.add_argument(
+        '--syslog', '-s', action='store_true', default=False,
+        help='Send log messages to /dev/log instead of stdout')
     parser.add_argument(
         '--dry-run', '-d', action='store_true', default=False,
         help='Show which files should be deleted')
@@ -47,14 +54,21 @@ def parse_arguments(argv=None):
     return parser.parse_args(argv, namespace)
 
 
-def configure_logging(level,
-                      message_format=DEFAULT_MESSAGE_FORMAT,
-                      date_format=DEFAULT_DATE_FORMAT,
-                      stream=sys.stdout):
+def configure_logging(level, use_syslog=False, stream=sys.stdout):
     """Configure logging.
     """
+    if use_syslog:
+        message_format = SYSLOG_MESSAGE_FORMAT
+        date_format = None
+        handler = logging.handlers.SysLogHandler('/dev/log')
+    else:
+        message_format = DEFAULT_MESSAGE_FORMAT
+        date_format = DEFAULT_DATE_FORMAT
+        # XXX: Looks like a pylint bug, because both SysLogHandler and
+        # StreamHandler inherit from Logger.
+        handler = logging.StreamHandler(stream)  # pylint: disable=R0204
+
     formatter = logging.Formatter(message_format, date_format)
-    handler = logging.StreamHandler(stream)
     handler.setFormatter(formatter)
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
@@ -65,7 +79,7 @@ def main(argv=None):
     """Command line entry point.
     """
     arguments = parse_arguments(argv)
-    configure_logging(arguments.log_level)
+    configure_logging(arguments.log_level, arguments.syslog)
 
     files = finder.find(arguments.directory, arguments.filters)
 
