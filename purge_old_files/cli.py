@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 import logging
 from os import unlink
 import sys
@@ -16,9 +16,14 @@ def parse_arguments(argv=None):
     """
     parser = ArgumentParser()
 
-    parser.add_argument(
-        '--debug', '-D', action='store_true', default=False,
-        help='Show debug messages')
+    log_level_parser = parser.add_mutually_exclusive_group()
+    log_level_parser.add_argument(
+        '--debug', '-D', dest='log_level', action='store_const',
+        const=logging.DEBUG, help='Show debug messages')
+    log_level_parser.add_argument(
+        '--quiet', '-q', dest='log_level', action='store_const',
+        const=logging.WARNING, help='Only show warning messages')
+
     parser.add_argument(
         '--dry-run', '-d', action='store_true', default=False,
         help='Show which files should be deleted')
@@ -36,16 +41,18 @@ def parse_arguments(argv=None):
     parser.add_argument(
         'directory', metavar='DIRECTORY', help='Directory to be scanned')
 
-    return parser.parse_args(argv)
+    # Create a namespace and set the default log_level
+    namespace = Namespace(log_level=logging.INFO)
+
+    return parser.parse_args(argv, namespace)
 
 
-def configure_logging(debug=False,
+def configure_logging(level,
                       message_format=DEFAULT_MESSAGE_FORMAT,
                       date_format=DEFAULT_DATE_FORMAT,
                       stream=sys.stdout):
     """Configure logging.
     """
-    level = logging.DEBUG if debug else logging.INFO
     formatter = logging.Formatter(message_format, date_format)
     handler = logging.StreamHandler(stream)
     handler.setFormatter(formatter)
@@ -58,7 +65,7 @@ def main(argv=None):
     """Command line entry point.
     """
     arguments = parse_arguments(argv)
-    configure_logging(arguments.debug)
+    configure_logging(arguments.log_level)
 
     files = finder.find(arguments.directory, arguments.filters)
 
