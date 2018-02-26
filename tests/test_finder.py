@@ -34,7 +34,7 @@ def test_find(tmpdir):
     ]
 
 
-def test_file(tmpdir):
+def test_file_stat(tmpdir):
     # Create an empty file
     file_path = tmpdir.join('file')
     file_path.write('')
