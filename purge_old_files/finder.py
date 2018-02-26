@@ -38,7 +38,7 @@ class File:
     @property
     def stat(self):
         if self._stat is None:
-            self._stat = stat(self.path)
+            self._stat = stat(self.path, follow_symlinks=False)
         return self._stat
 
     @property

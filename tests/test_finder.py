@@ -1,4 +1,5 @@
 from datetime import timedelta
+import os
 
 from purge_old_files.finder import find, File
 from purge_old_files.filters import age, glob
@@ -31,3 +32,14 @@ def test_find(tmpdir):
     assert find(str(tmpdir), [glob('[0-9]'), age(timedelta(days=8))]) == [
         File('%s/foo/2' % tmpdir),
     ]
+
+
+def test_file(tmpdir):
+    # Create an empty file
+    file_path = tmpdir.join('file')
+    file_path.write('')
+    # Create a symlink to it
+    link_path = tmpdir.join('link')
+    os.symlink(str(file_path), str(link_path))
+    # Ensure they don't return the same stat values
+    assert File(str(file_path)).stat != File(str(link_path)).stat
