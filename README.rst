@@ -15,8 +15,8 @@ Usage
 .. code-block:: console
 
     $ purge-old-files -h
-    usage: purge-old-files [-h] [--debug] [--dry-run] [--include PATTERN]
-                           [--exclude PATTERN]
+    usage: purge-old-files [-h] [--debug | --quiet] [--dry-run]
+                           [--include PATTERN] [--exclude PATTERN]
                            MIN_AGE DIRECTORY
 
     positional arguments:
@@ -26,6 +26,7 @@ Usage
     optional arguments:
       -h, --help            show this help message and exit
       --debug, -D           Show debug messages
+      --quiet, -q           Only show warning messages
       --dry-run, -d         Show which files should be deleted
       --include PATTERN, -i PATTERN
                             Include only files matching pattern
