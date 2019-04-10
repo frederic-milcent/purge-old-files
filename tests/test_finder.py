@@ -15,6 +15,7 @@ def test_find(tmpdir):
         File('%s/foo/1' % tmpdir),
         File('%s/foo/2' % tmpdir),
         File('%s/foo/bar/baz' % tmpdir),
+        File('%s/foobar/1' % tmpdir),
     ]
 
     # Test filtering based on time
@@ -26,11 +27,13 @@ def test_find(tmpdir):
     assert sorted(find(str(tmpdir), [glob('[0-9]')])) == [
         File('%s/foo/1' % tmpdir),
         File('%s/foo/2' % tmpdir),
+        File('%s/foobar/1' % tmpdir),
     ]
 
     # Test with a mix of filters
     assert find(str(tmpdir), [glob('[0-9]'), age(timedelta(days=8))]) == [
         File('%s/foo/2' % tmpdir),
+        File('%s/foobar/1' % tmpdir),
     ]
 
 
