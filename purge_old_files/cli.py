@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, Namespace
+from glob import glob
 import logging
 import logging.handlers
 from os import unlink, getpid
@@ -47,7 +48,8 @@ def parse_arguments(argv=None):
         help='Minimum age of files')
     parser.add_argument(
         'directories', metavar='DIRECTORY', nargs='*',
-        help='Directory to be scanned (multiple directories can be provided)')
+        help='Directory  or glob pattern to be scanned '
+             '(multiple directories can be provided)')
 
     # Create a namespace and set the default log_level
     namespace = Namespace(log_level=logging.INFO)
@@ -84,7 +86,8 @@ def main(argv=None):
 
     files = [
         file_
-        for directory in arguments.directories
+        for pattern in arguments.directories
+        for directory in glob(pattern)
         for file_ in finder.find(directory, arguments.filters)
     ]
 

@@ -1,4 +1,5 @@
 from os.path import join
+from glob import glob
 import logging
 import logging.handlers
 
@@ -61,6 +62,13 @@ from tests.helpers import make_test_files_hierarchy
             logging.INFO,
             logging.StreamHandler,
         ),
+        (
+            ['10d'],
+            ['foo*'],
+            ['foo/1'],
+            logging.INFO,
+            logging.StreamHandler,
+        ),
     ),
 )
 def test(  # pylint: disable=too-many-arguments
@@ -77,7 +85,8 @@ def test(  # pylint: disable=too-many-arguments
     # Ensure results are consistent
     remaining_files = sorted(
         file_
-        for directory in absolute_directories
+        for pattern in absolute_directories
+        for directory in glob(pattern)
         for file_ in finder.find(directory))
     assert remaining_files == [
         finder.File(join(str_tmpdir, path)) for path in expected_remaining]

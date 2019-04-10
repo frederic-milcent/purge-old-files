@@ -21,8 +21,8 @@ Usage
 
     positional arguments:
       MIN_AGE               Minimum age of files
-      DIRECTORY             Directory to be scanned (multiple directories can be
-                            provided)
+      DIRECTORY             Directory or glob pattern to be scanned (multiple
+                            directories can be provided)
 
     optional arguments:
       -h, --help            show this help message and exit
