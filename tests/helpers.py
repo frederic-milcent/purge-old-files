@@ -21,3 +21,8 @@ def make_test_files_hierarchy(tmpdir):
     baz = foo.mkdir('bar').join('baz')
     baz.write('baz')
     utime(str(baz), (one_year_ago, one_year_ago))
+
+    foobar = tmpdir.mkdir('foobar')
+    foobar_1 = foobar.join('1')
+    foobar_1.write('1')
+    utime(str(foobar_1), (one_month_ago, one_month_ago))
