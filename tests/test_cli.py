@@ -54,6 +54,13 @@ from tests.helpers import make_test_files_hierarchy
             logging.WARNING,
             logging.StreamHandler
         ),
+        (
+            ['10d'],
+            ['foo', 'foobar'],
+            ['foo/1'],
+            logging.INFO,
+            logging.StreamHandler,
+        ),
     ),
 )
 def test(  # pylint: disable=too-many-arguments
