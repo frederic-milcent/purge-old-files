@@ -17,11 +17,12 @@ Usage
     $ purge-old-files -h
     usage: purge-old-files [-h] [--debug | --quiet] [--syslog] [--dry-run]
                            [--include PATTERN] [--exclude PATTERN]
-                           MIN_AGE DIRECTORY
+                           MIN_AGE [DIRECTORY [DIRECTORY ...]]
 
     positional arguments:
       MIN_AGE               Minimum age of files
-      DIRECTORY             Directory to be scanned
+      DIRECTORY             Directory to be scanned (multiple directories can be
+                            provided)
 
     optional arguments:
       -h, --help            show this help message and exit
